@@ -312,7 +312,7 @@ object list {
     }
 
     // ?? надо либо ++ либо flatten - или же я чего нибудь не понимаю?
-    def flatMap[B](f: T => List[B]): List[B] = this.map(x => f(x)).flatten
+//    def flatMap[B](f: T => List[B]): List[B] = this.map(x => f(x)).flatten
 
     /**
      *
