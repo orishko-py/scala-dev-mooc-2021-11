@@ -16,7 +16,22 @@ object task_collections {
    *
    * **/
   def capitalizeIgnoringASCII(text: List[String]): List[String] = {
-    List.empty
+    val capitalizeASCIIPartial: PartialFunction[String, String] = {
+      case x if isASCIIString(x) => x.toUpperCase()
+    }
+
+    val capitalizeNotASCIIPartial: PartialFunction[String, String] = {
+      case x if !isASCIIString(x) => x.toLowerCase()
+    }
+
+    val capASCIIPartialChained = capitalizeASCIIPartial.orElse(capitalizeNotASCIIPartial)
+
+    text.zipWithIndex.collect{
+      case (st, idx) if idx == 0 => st
+      case (st, idx) if idx > 0 => capASCIIPartialChained(st)
+    }
+
+
   }
 
   /**
@@ -29,7 +44,23 @@ object task_collections {
    * HINT: Для всех возможных комбинаций чисел стоит использовать Map
    * **/
   def numbersToNumericString(text: String): String = {
-    ""
+    val integerLookup = Map(
+      "0" -> "zero",
+      "1" -> "one",
+      "2" -> "two",
+      "3" -> "three",
+      "4" -> "four",
+      "5" -> "five",
+      "6" -> "six",
+      "7" -> "seven",
+      "8" -> "eight",
+      "9" -> "nine"
+    )
+    text.collect{
+      case t if integerLookup.isDefinedAt(t.toString) => integerLookup(t.toString)
+      case t if !integerLookup.isDefinedAt(t.toString) => t.toString
+    }.mkString
+
   }
 
   /**
@@ -47,7 +78,13 @@ object task_collections {
    * Реализуйте метод который примет две коллекции (два источника) и вернёт объединенный список уникальный значений
    **/
   def intersectionAuto(dealerOne: Iterable[Auto], dealerTwo: Iterable[Auto]): Iterable[Auto] = {
-    Iterable.empty
+    val dealerOneSet = dealerOne.toSet
+    val dealerTwoSet = dealerTwo.toSet
+
+    for (autoOne <- dealerOneSet ;
+         autoTwo <- dealerTwoSet
+         if (autoOne.mark == autoTwo.mark) & (autoOne.model == autoTwo.model))
+    yield autoOne
   }
 
   /**
@@ -56,6 +93,9 @@ object task_collections {
    * и вернёт уникальный список машин обслуживающихся в первом дилерском центре и не обслуживающимся во втором
    **/
   def filterAllLeftDealerAutoWithoutRight(dealerOne: Iterable[Auto], dealerTwo: Iterable[Auto]): Iterable[Auto] = {
-    Iterable.empty
+    val dealerOneSet = dealerOne.toSet
+    val dealerTwoSet = dealerTwo.toSet
+
+    for (autoOne <- dealerOneSet if !dealerTwoSet.toSet.contains(autoOne)) yield autoOne
   }
 }
