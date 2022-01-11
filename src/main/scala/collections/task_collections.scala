@@ -56,10 +56,9 @@ object task_collections {
       "8" -> "eight",
       "9" -> "nine"
     )
-    text.collect{
-      case t if integerLookup.isDefinedAt(t.toString) => integerLookup(t.toString)
-      case t if !integerLookup.isDefinedAt(t.toString) => t.toString
-    }.mkString
+    text
+      .split(' ')
+      .map(word => integerLookup.getOrElse(word, word)).mkString(sep = " ")
 
   }
 
@@ -78,13 +77,7 @@ object task_collections {
    * Реализуйте метод который примет две коллекции (два источника) и вернёт объединенный список уникальный значений
    **/
   def intersectionAuto(dealerOne: Iterable[Auto], dealerTwo: Iterable[Auto]): Iterable[Auto] = {
-    val dealerOneSet = dealerOne.toSet
-    val dealerTwoSet = dealerTwo.toSet
-
-    for (autoOne <- dealerOneSet ;
-         autoTwo <- dealerTwoSet
-         if (autoOne.mark == autoTwo.mark) & (autoOne.model == autoTwo.model))
-    yield autoOne
+    dealerOne.toSet.intersect(dealerTwo.toSet)
   }
 
   /**
@@ -93,9 +86,6 @@ object task_collections {
    * и вернёт уникальный список машин обслуживающихся в первом дилерском центре и не обслуживающимся во втором
    **/
   def filterAllLeftDealerAutoWithoutRight(dealerOne: Iterable[Auto], dealerTwo: Iterable[Auto]): Iterable[Auto] = {
-    val dealerOneSet = dealerOne.toSet
-    val dealerTwoSet = dealerTwo.toSet
-
-    for (autoOne <- dealerOneSet if !dealerTwoSet.toSet.contains(autoOne)) yield autoOne
+    dealerOne.toSet -- dealerTwo.toSet
   }
 }
